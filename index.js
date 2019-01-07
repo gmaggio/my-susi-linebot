@@ -18,8 +18,9 @@ const app = express();
 
 // register a webhook handler with middleware
 app.post("/webhook", line.middleware(config), (req, res) => {
+  console.log("helo gans");
   Promise.all(req.body.events.map(handleEvent))
-    .then(result => res.json(result))
+    .then(result => res.status(200).send(result))
     .catch(err => {
       console.error(err);
       res.status(500).end();
