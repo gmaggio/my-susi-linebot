@@ -18,42 +18,44 @@ const app = express();
 
 // register a webhook handler with middleware
 app.post("/webhook", line.middleware(config), (req, res) => {
-  //    Promise
-  //        .all(req.body.events.map(handleEvent))
-  //        .then((result) => res.json(result))
-  //        .catch((err) => {
-  //         console.error(err);
-  //         res.status(500).end();
-  //       });
-  res.status(200).end();
+  Promise.all(req.body.events.map(handleEvent))
+    .then(result => res.json(result))
+    .catch(err => {
+      console.error(err);
+      res.status(500).end();
+    });
 });
 
 // event handler
 function handleEvent(event) {
-  if (event.type !== "message" || event.message.type !== "text") {
-    // ignore non-text-message event
-    return Promise.resolve(null);
-  }
-  var options = {
-    method: "GET",
-    url: "https://api.susi.ai/susi/chat.json",
-    qs: {
-      timezoneOffset: "-330",
-      q: event.message.text
-    }
-  };
-  request(options, function(error, response, body) {
-    if (error) throw new Error(error);
-    // answer fetched from susi
-    var ans = JSON.parse(body).answers[0].actions[0].expression;
-    // create a echoing text message
-    const answer = {
-      type: "text",
-      text: ans
-    };
-    // use reply API
-    return client.replyMessage(event.replyToken, answer);
+  return client.replyMessage(event.replyToken, {
+    type: "test",
+    text: "helo helo"
   });
+  //   if (event.type !== "message" || event.message.type !== "text") {
+  //     // ignore non-text-message event
+  //     return Promise.resolve(null);
+  //   }
+  //   var options = {
+  //     method: "GET",
+  //     url: "https://api.susi.ai/susi/chat.json",
+  //     qs: {
+  //       timezoneOffset: "-330",
+  //       q: event.message.text
+  //     }
+  //   };
+  //   request(options, function(error, response, body) {
+  //     if (error) throw new Error(error);
+  //     // answer fetched from susi
+  //     var ans = JSON.parse(body).answers[0].actions[0].expression;
+  //     // create a echoing text message
+  //     const answer = {
+  //       type: "text",
+  //       text: ans
+  //     };
+  //     // use reply API
+  //     return client.replyMessage(event.replyToken, answer);
+  //   });
 }
 
 // listen on port
