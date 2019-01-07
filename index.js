@@ -27,7 +27,7 @@ app.post("/webhook", line.middleware(config), (req, res) => {
 });
 
 // event handler
-function handleEvent(event) {
+async function handleEvent(event) {
   return client.replyMessage(event.replyToken, {
     type: "test",
     text: "helo helo"
